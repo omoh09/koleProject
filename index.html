@@ -6,51 +6,60 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
 </head>
+<style>
+  body, html, #container {
+    width: 100%;
+    height: 100%;
+    overflow:hidden;
+  }
+
+  div, img {
+    position:absolute;
+    user-select: none;
+    overflow:hidden;  
+  }
+</style>
 <body>
    <!--nav section--> 
     <header>
-      <ul class="gallery">
-        <li style="background: #f6bd60;"></li>
-        <li style="background: #f7ede2;"></li>
-        <li style="background: #f5cac3;"></li>
-        <li style="background: #84a59d;"></li>
-        <li style="background: #f28482;"></li>
-      </ul>
+      <div id="container"></div>    
     </header>
-    <main>
 
+    <main>
     </main>
+
     <footer>
 
     </footer>
     <script>
-      const slider = document.querySelector('.gallery');
-      let isDown = false;
-      let startX;
-      let scrollLeft;
+      gsap.set('#container', {perspective:900});
 
-      slider.addEventListener('mousedown', e => {
-        isDown = true;
-        slider.classList.add('active');
-        startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-      });
-      slider.addEventListener('mouseleave', _ => {
-        isDown = false;
-        slider.classList.remove('active');
-      });
-      slider.addEventListener('mouseup', _ => {
-        isDown = false;
-        slider.classList.remove('active');
-      });
-      slider.addEventListener('mousemove', e => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - slider.offsetLeft;
-        const SCROLL_SPEED = 3;
-        const walk = (x - startX) * SCROLL_SPEED;
-        slider.scrollLeft = scrollLeft - walk;
-      });
+      const n = 20; //number of divs
+
+      for (let i=0; i<n; i++){  
+        let b = document.createElement('div');  
+        b.classList.add('box');
+        document.getElementById('container').appendChild(b);
+        
+        gsap.set(b, {
+          left:'50%',
+          top:'50%',
+          xPercent:-50,
+          yPercent:-50,
+          color:'#fff',
+          z:2000,
+          width:318, //adjust as needed to avoid space between divs
+          height:'110%',
+          rotationY:i/n*360,
+          transformOrigin:String("50% 50% -1000%"),
+          backgroundImage:'url(https://assets.codepen.io/721952/pano.jpg)',
+          backgroundPosition:i*-318+'px -220px'
+        });  
+      }
+
+      window.onmousemove = (e)=>{
+        gsap.to('.box', {duration:0.6, rotationY:(i)=>-180+i/n*360+360*(e.clientX/window.innerWidth) }); // TO DO: add vertical movement
+      }
     </script>
 </body>
 </html>
